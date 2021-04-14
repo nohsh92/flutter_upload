@@ -107,7 +107,7 @@ class SignUpSection extends StatelessWidget {
 
 signup(email, password) async {
   final http.Response response = await http.post(
-    Uri.http("127.0.0.1:5000", "/signup"),
+    Uri.http("10.0.2.2:5000", "/signup"),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -190,7 +190,7 @@ class LoginSection extends StatelessWidget {
 
 login(email, password) async {
   final http.Response response = await http.post(
-    Uri.http("127.0.0.1:5000", "/login"),
+    Uri.http("10.0.2.2:5000", "/login"),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
