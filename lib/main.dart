@@ -10,6 +10,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'globals.dart' as globals;
+
 void main() {
   runApp(MyApp());
 }
@@ -216,6 +218,7 @@ class LandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Item Categories'),
       ),
       body: CustomScrollView(
@@ -250,10 +253,9 @@ class _BottomNav extends StatefulWidget {
 
 /// This is the private State class that goes with _BottomNav.
 class __BottomNavState extends State<_BottomNav> {
-  int _selectedIndex = 0;
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      globals.selectedPageIndex = index;
       if (index == 0) {
         Navigator.pushNamed(context, LandingScreen.id);
       }
@@ -283,8 +285,8 @@ class __BottomNavState extends State<_BottomNav> {
           label: 'Logout',
         ),
       ],
-      currentIndex: _selectedIndex,
-      selectedItemColor: Colors.amber[800],
+      currentIndex: globals.selectedPageIndex,
+      selectedItemColor: Colors.blue[800],
       onTap: _onItemTapped,
     );
   }
@@ -435,22 +437,60 @@ class _UploaderState extends State<Uploader> {
 
 class ItemScreen extends StatelessWidget {
   static const String id = "ItemScreen";
+  List _buildList(int count) {
+    List<Widget> listItems = List();
+    for (int i = 0; i < count; i++) {
+      listItems.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Container(
+            child: Card(
+              color: Colors.grey.shade800,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                  'Card ${i.toString()}',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.blue.shade200,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return listItems;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(child: Text("Logout")),
-          TextButton.icon(
-              onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString('token', '');
-                Navigator.pushNamed(context, LoginSection.id);
-              },
-              icon: Icon(Icons.send),
-              label: Text("Logout"))
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Items'),
+      ),
+      body: CustomScrollView(
+        slivers: [
+          // Going to use on the item page later
+          SliverAppBar(
+            expandedHeight: 300.0,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.asset(
+                'images/bg1.jpg',
+                fit: BoxFit.cover,
+              ),
+              stretchModes: [
+                StretchMode.zoomBackground,
+              ],
+            ),
+          ),
+
+          // Have to find a way to populate the list from DB
+          SliverList(
+            delegate: SliverChildListDelegate(_buildList(10)),
+          ),
         ],
       ),
       bottomNavigationBar: _BottomNav(),
