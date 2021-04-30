@@ -1,4 +1,17 @@
 # flutter_loginPage
+
+Progress Overview
+[O] 1. Create login page
+[O] 2. Create categories page
+[O] 3. Create items page
+[O] 4. Set up rudimetary server
+[O] 5. Set up login infrastructure
+[O] 6. Use CustomScrollView to make lists
+[X] 7. Create API for app <-> server interface
+[X] 8. Find method for uploading pictures
+[X] 9. Finalize layout and pages
+[X] 10. Debugging
+
  
 Developing an app that will allow the user to upload pictures of items, along with the descriptions and categories of each item.
 
