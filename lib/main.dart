@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
       LogoutScreen.id: (context) => LogoutScreen(),
       ImageCapture.id: (context) => ImageCapture(),
       Uploader.id: (context) => Uploader(),
+      ItemScreen.id: (context) => ItemScreen(),
     });
   }
 }
@@ -208,27 +209,30 @@ login(email, password) async {
 
 class LandingScreen extends StatelessWidget {
   static const String id = "LandingScreen";
+  List<int> top = <int>[];
+  List<int> bottom = <int>[0];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(child: Text("Welcome to the Landing Screen")),
-          TextButton.icon(
-              onPressed: () async {
-                Navigator.pushNamed(context, ImageCapture.id);
+      appBar: AppBar(
+        title: const Text('Item Categories'),
+      ),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return Container(
+                  alignment: Alignment.center,
+                  color: Colors.blue[200 + top[index] % 4 * 100],
+                  height: 100 + top[index] % 4 * 20.0,
+                  child: Text('Item: ${top[index]}'),
+                );
               },
-              icon: Icon(Icons.arrow_forward),
-              label: Text('Onto Pics')),
-          TextButton.icon(
-              onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString('token', '');
-                Navigator.pushNamed(context, LoginSection.id);
-              },
-              icon: Icon(Icons.send),
-              label: Text("Logout"))
+              childCount: top.length,
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: _BottomNav(),
@@ -254,7 +258,7 @@ class __BottomNavState extends State<_BottomNav> {
         Navigator.pushNamed(context, LandingScreen.id);
       }
       if (index == 1) {
-        Navigator.pushNamed(context, LandingScreen.id);
+        Navigator.pushNamed(context, ItemScreen.id);
       }
       if (index == 2) {
         Navigator.pushNamed(context, LogoutScreen.id);
@@ -267,15 +271,15 @@ class __BottomNavState extends State<_BottomNav> {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+          icon: Icon(Icons.category),
+          label: 'Categories',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.business),
-          label: 'Business',
+          icon: Icon(Icons.list),
+          label: 'Items',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.school),
+          icon: Icon(Icons.logout),
           label: 'Logout',
         ),
       ],
@@ -426,5 +430,30 @@ class _UploaderState extends State<Uploader> {
         icon: Icon(Icons.cloud_upload),
       );
     }
+  }
+}
+
+class ItemScreen extends StatelessWidget {
+  static const String id = "ItemScreen";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(child: Text("Logout")),
+          TextButton.icon(
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('token', '');
+                Navigator.pushNamed(context, LoginSection.id);
+              },
+              icon: Icon(Icons.send),
+              label: Text("Logout"))
+        ],
+      ),
+      bottomNavigationBar: _BottomNav(),
+    );
   }
 }
