@@ -8,6 +8,7 @@ Progress Overview
 [O] 4. Set up rudimetary server  
 [O] 5. Set up login infrastructure  
 [O] 6. Use CustomScrollView to make lists  
+[X] 7. Create API for mongoDB <-> server interface
 [X] 7. Create API for app <-> server interface  
 [X] 8. Find method for uploading pictures  
 [X] 9. Finalize layout and pages  
