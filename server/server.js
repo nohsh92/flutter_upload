@@ -1,9 +1,11 @@
 const express = require('express')
-const app = express()
-
 const mongoose = require("mongoose")
-
 const dotenv = require('dotenv').config();
+const multer=require('multer')
+const path= require('path')
+const model = require('./model')
+
+
 const connectionString = 'mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@finditcluster.b7xew.mongodb.net/test?authSource=admin&replicaSet=atlas-jly7ul-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true'
 const dbusername = process.env.DB_USERNAME
 const dbpassword = process.env.DB_PASSWORD
@@ -11,6 +13,7 @@ const port = process.env.PORT
 
 var jwt = require('jsonwebtoken');
 
+const app = express();
 
 //db
 async function connectDB() {
@@ -34,11 +37,36 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', '*');
   next();
 });
+app.use('/uploads', express.static(__dirname +'/uploads'));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('We are at home')
 })
 
+// Multer configuration for picture files
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'uploads')
+  },
+
+  filename: function(req,file,cb) {
+    cb(null, new Date().toISOString()+file.originalname
+    )
+  }
+})
+
+const imageSchema = mongoose.schema(
+  {
+    image: {
+      type: String,
+      required: true
+    }
+  }
+);
+
+module.exports = mongoose.model("Images", imageSchema)
+
+// Schema for login
 const schema = new mongoose.Schema({ email: 'string', password: 'string' });
 const User = mongoose.model('User', schema);
 
@@ -65,7 +93,7 @@ app.post('/signup', async (req, res) => {
     res.json({token:token});
   })
 
-  // signup route api
+  // login route api
 app.post('/login', async (req, res) => {
   const {email, password} = req.body;
   console.log(email);
@@ -86,6 +114,29 @@ app.post('/login', async (req, res) => {
   return res.json({token:token});
 
 })
+
+
+
+// upload route api
+app.post('/upload', upload.single('myFile'), async(req, res, next) => {    
+  const file = req.file    
+  if (!file) {      
+    const error = new Error('Please upload a file')      
+    error.httpStatusCode = 400      
+    return next("hey error")    
+  }                  
+  const imagepost= new model({        
+    image: file.path      
+  })
+  const savedimage= await imagepost.save()      
+  res.json(savedimage)      
+})   
+
+app.get('/image',async(req, res)=>{   
+  const image = await model.find()   
+  res.json(image)     
+})
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
