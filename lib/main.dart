@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       ImageCapture.id: (context) => ImageCapture(),
       Uploader.id: (context) => Uploader(),
       ItemScreen.id: (context) => ItemScreen(),
+      ItemDetailScreen.id: (context) => ItemDetailScreen(),
     });
   }
 }
@@ -135,7 +136,10 @@ class LoginSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Login'),
+      ),
       body: CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           automaticallyImplyLeading: false,
@@ -179,6 +183,7 @@ class LoginSection extends StatelessWidget {
                     String token = prefs.getString('token');
                     if (token != null) {
                       Navigator.pushNamed(context, LandingScreen.id);
+                      globals.selectedPageIndex = 0;
                     }
                   },
                   icon: Icon(Icons.save),
@@ -215,26 +220,45 @@ class LandingScreen extends StatelessWidget {
   List<int> bottom = <int>[0];
 
   @override
+  List _buildList(int count) {
+    List<Widget> listItems = List();
+    for (int i = 0; i < count; i++) {
+      listItems.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Container(
+            child: Card(
+              color: Colors.grey.shade800,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                  'Category ${i.toString()}',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.blue.shade200,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return listItems;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Item Categories'),
+        title: const Text('Categories'),
       ),
       body: CustomScrollView(
-        slivers: <Widget>[
+        slivers: [
+          // Have to find a way to populate the list from DB
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return Container(
-                  alignment: Alignment.center,
-                  color: Colors.blue[200 + top[index] % 4 * 100],
-                  height: 100 + top[index] % 4 * 20.0,
-                  child: Text('Item: ${top[index]}'),
-                );
-              },
-              childCount: top.length,
-            ),
+            delegate: SliverChildListDelegate(_buildList(10)),
           ),
         ],
       ),
@@ -449,7 +473,7 @@ class ItemScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  'Card ${i.toString()}',
+                  'Item ${i.toString()}',
                   style: TextStyle(
                     fontSize: 30,
                     color: Colors.blue.shade200,
@@ -473,6 +497,28 @@ class ItemScreen extends StatelessWidget {
       ),
       body: CustomScrollView(
         slivers: [
+          // Have to find a way to populate the list from DB
+          SliverList(
+            delegate: SliverChildListDelegate(_buildList(10)),
+          ),
+        ],
+      ),
+      bottomNavigationBar: _BottomNav(),
+    );
+  }
+}
+
+class ItemDetailScreen extends StatelessWidget {
+  static const String id = "ItemDetailScreen";
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Items'),
+      ),
+      body: CustomScrollView(
+        slivers: [
           // Going to use on the item page later
           SliverAppBar(
             expandedHeight: 300.0,
@@ -485,11 +531,6 @@ class ItemScreen extends StatelessWidget {
                 StretchMode.zoomBackground,
               ],
             ),
-          ),
-
-          // Have to find a way to populate the list from DB
-          SliverList(
-            delegate: SliverChildListDelegate(_buildList(10)),
           ),
         ],
       ),
