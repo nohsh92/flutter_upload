@@ -4,6 +4,7 @@ const dotenv = require('dotenv').config();
 const multer=require('multer')
 const path= require('path')
 const model = require('./model')
+const models = require('./model')
 
 
 const connectionString = 'mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@finditcluster.b7xew.mongodb.net/test?authSource=admin&replicaSet=atlas-jly7ul-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true'
@@ -30,6 +31,10 @@ async function connectDB() {
 }
 connectDB()
 
+app.get('/', (req, res) => {
+  res.send('We are at home')
+})
+
 // this takes the post body
 app.use(express.json({extended: false}));
 app.use((req, res, next) => {
@@ -39,9 +44,6 @@ app.use((req, res, next) => {
 });
 app.use('/uploads', express.static(__dirname +'/uploads'));
 
-app.get('/', (req, res) => {
-  res.send('We are at home')
-})
 
 // Multer configuration for picture files
 var storage = multer.diskStorage({
@@ -54,17 +56,6 @@ var storage = multer.diskStorage({
     )
   }
 })
-
-const imageSchema = mongoose.schema(
-  {
-    image: {
-      type: String,
-      required: true
-    }
-  }
-);
-
-module.exports = mongoose.model("Images", imageSchema)
 
 // Schema for login
 const schema = new mongoose.Schema({ email: 'string', password: 'string' });
@@ -118,6 +109,7 @@ app.post('/login', async (req, res) => {
 
 
 // upload route api
+var upload = multer({storage: storage})
 app.post('/upload', upload.single('myFile'), async(req, res, next) => {    
   const file = req.file    
   if (!file) {      
