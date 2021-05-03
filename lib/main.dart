@@ -1,14 +1,18 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:async';
+import 'package:async/async.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'package:path/path.dart' as path;
 
 import 'globals.dart' as globals;
 
@@ -409,53 +413,89 @@ class Uploader extends StatefulWidget {
 
   Uploader({Key key, this.file}) : super(key: key);
 
-  createState() => _UploaderState();
+  _UploaderState createState() => _UploaderState();
 }
 
 class _UploaderState extends State<Uploader> {
-  final FirebaseStorage _storage =
-      FirebaseStorage(storageBucket: 'gs://findit-22575.appspot.com');
+  File _image;
+  final picker = ImagePicker();
 
-  StorageUploadTask _uploadTask;
-
-  void _startUpload() {
-    String filePath = 'images/${DateTime.now()}.png';
-
+  Future<void> getImage() async {
+    final pickedFile = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
-      _uploadTask = _storage.ref().child(filePath).putFile(widget.file);
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  upload(File imageFile) async {
+    // open a bytestream
+    var stream =
+        new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+    // get file length
+    var length = await imageFile.length();
+
+    // string to uri
+    var uri = Uri.parse("http://10.0.2.2:5000/upload");
+    // create multipart request
+    var request = new http.MultipartRequest("POST", uri);
+
+    // multipart that takes file
+    var multipartFile = new http.MultipartFile('myFile', stream, length,
+        filename: path.basename(imageFile.path));
+
+    // add file to multipart
+    request.files.add(multipartFile);
+
+    // send
+    var response = await request.send();
+    print(response.statusCode);
+
+    // listen for response
+    response.stream.transform(utf8.decoder).listen((value) {
+      print(value);
+    });
+  }
+
+  bool isloaded = false;
+  var result;
+  fetch() async {
+    var response = await http.get(Uri.parse("http://10.0.2.2:5000/image"));
+    result = jsonDecode(response.body);
+    print(result[0]['image']);
+    setState(() {
+      isloaded = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_uploadTask != null) {
-      return StreamBuilder<StorageTaskEvent>(
-          stream: _uploadTask.events,
-          builder: (context, snapshot) {
-            var event = snapshot?.data?.snapshot;
-
-            double progressPercent = event != null
-                ? event.bytesTransferred / event.totalByteCount
-                : 0;
-
-            return Column(
-              children: [
-                if (_uploadTask.isComplete) Text('Congrats'),
-                if (_uploadTask.isPaused)
-                  TextButton(
-                      onPressed: _uploadTask.pause, child: Icon(Icons.pause)),
-                LinearProgressIndicator(value: progressPercent),
-                Text('${(progressPercent * 100).toStringAsFixed(2)} % ')
-              ],
-            );
-          });
-    } else {
-      return TextButton.icon(
-        onPressed: () => _startUpload(),
-        label: Text('Upload to Firebase'),
-        icon: Icon(Icons.cloud_upload),
-      );
-    }
+    fetch();
+    return Scaffold(
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          Text("Select an image"),
+          TextButton.icon(
+              onPressed: () async => await getImage(),
+              icon: Icon(Icons.upload_file),
+              label: Text("Browse")),
+          SizedBox(
+            height: 20,
+          ),
+          TextButton.icon(
+              onPressed: () => upload(_image),
+              icon: Icon(Icons.upload_rounded),
+              label: Text("Upload now")),
+          isloaded
+              ? Image.network('http://10.0.2.2:5000/${result[0]['image']}')
+              : CircularProgressIndicator(),
+        ],
+      ),
+    );
   }
 }
 
@@ -492,9 +532,15 @@ class ItemScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Items'),
-      ),
+          centerTitle: true,
+          title: const Text('Items'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.add_a_photo),
+              tooltip: 'Add Photo',
+              onPressed: () => Navigator.pushNamed(context, Uploader.id),
+            )
+          ]),
       body: CustomScrollView(
         slivers: [
           // Have to find a way to populate the list from DB
