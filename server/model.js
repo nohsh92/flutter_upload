@@ -10,3 +10,5 @@ const imageSchema= mongoose.Schema(
 );
 
 module.exports = mongoose.model("Images", imageSchema)
+
+// Schema for login

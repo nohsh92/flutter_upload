@@ -44,6 +44,9 @@ app.use((req, res, next) => {
 });
 app.use('/uploads', express.static(__dirname +'/uploads'));
 
+// Schema for login
+const schema = new mongoose.Schema({ email: 'string', password: 'string' });
+const User = mongoose.model('User', schema);
 
 // Multer configuration for picture files
 var storage = multer.diskStorage({
@@ -52,14 +55,10 @@ var storage = multer.diskStorage({
   },
 
   filename: function(req,file,cb) {
-    cb(null, new Date().toISOString()+file.originalname
+    cb(null, /*new Date().toISOString()+*/file.originalname
     )
   }
 })
-
-// Schema for login
-const schema = new mongoose.Schema({ email: 'string', password: 'string' });
-const User = mongoose.model('User', schema);
 
 // signup route api
 app.post('/signup', async (req, res) => {
@@ -120,8 +119,20 @@ app.post('/upload', upload.single('myFile'), async(req, res, next) => {
   const imagepost= new model({        
     image: file.path      
   })
-  const savedimage= await imagepost.save()      
-  res.json(savedimage)      
+
+  // const uploadingFile = req.body.image
+  const uploadingFile = imagepost.image
+  console.log(uploadingFile)
+  let imageFileExists = await model.findOne({image: uploadingFile});
+  console.log(imageFileExists)
+  if(imageFileExists) {
+    console.log("This file already exists")
+  }
+  else{
+    const savedimage= await imagepost.save()      
+    res.json(savedimage) 
+  }
+       
 })   
 
 app.get('/image',async(req, res)=>{   
