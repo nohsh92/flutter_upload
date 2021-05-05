@@ -452,11 +452,13 @@ class _UploaderState extends State<Uploader> {
 
     // send
     var response = await request.send();
-    print(response.statusCode);
+    // print(response.statusCode);
 
     // listen for response
     response.stream.transform(utf8.decoder).listen((value) {
       print(value);
+
+      Navigator.pushNamed(context, ItemScreen.id);
     });
   }
 
@@ -478,7 +480,16 @@ class _UploaderState extends State<Uploader> {
       appBar: AppBar(),
       body: Column(
         children: [
-          Text("Select an image"),
+          SizedBox(
+            height: 20,
+          ),
+          Row(crossAxisAlignment: CrossAxisAlignment.center),
+          Text(
+            "Select an image",
+          ),
+          SizedBox(
+            height: 20,
+          ),
           TextButton.icon(
               onPressed: () async => await getImage(),
               icon: Icon(Icons.upload_file),

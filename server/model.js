@@ -1,14 +1,19 @@
 const mongoose = require('mongoose');
 
-const imageSchema= mongoose.Schema(
+const itemSchema= mongoose.Schema(
   {
-      image:{
-          type: String,
-          required: true
-      }
+    name: 'string',
+    category: 'string',
+    keepdrop: 'string',
+    location: 'string,',
+    details: 'string,',
+    image:{
+        type: String,
+        required: true
+    }
   }
 );
 
-module.exports = mongoose.model("Images", imageSchema)
+module.exports = mongoose.model("Images", itemSchema)
 
 // Schema for login
