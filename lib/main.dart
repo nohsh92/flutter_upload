@@ -416,6 +416,12 @@ class Uploader extends StatefulWidget {
 }
 
 class _UploaderState extends State<Uploader> {
+  var name;
+  var category;
+  var keepdrop;
+  var location;
+  var details;
+
   File _image;
   final picker = ImagePicker();
 
@@ -483,6 +489,8 @@ class _UploaderState extends State<Uploader> {
             height: 20,
           ),
           Row(crossAxisAlignment: CrossAxisAlignment.center),
+
+          // Text and inputbox for image
           Text(
             "Select an image",
           ),
@@ -496,6 +504,38 @@ class _UploaderState extends State<Uploader> {
           SizedBox(
             height: 20,
           ),
+
+          /////////////// PICTURE DETAILS /////////////////////
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: CupertinoTextField(
+              restorationId: 'item_name',
+              placeholder: "name",
+              clearButtonMode: OverlayVisibilityMode.editing,
+              autocorrect: false,
+              onChanged: (value) {
+                name = value;
+              },
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: CupertinoTextField(
+              restorationId: 'item_name',
+              placeholder: "name",
+              clearButtonMode: OverlayVisibilityMode.editing,
+              autocorrect: false,
+              onChanged: (value) {
+                name = value;
+              },
+            ),
+          ),
+
+          SizedBox(
+            height: 20,
+          ),
+
           TextButton.icon(
               onPressed: () => upload(_image),
               icon: Icon(Icons.upload_rounded),
