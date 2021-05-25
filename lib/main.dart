@@ -436,7 +436,7 @@ class _UploaderState extends State<Uploader> {
     });
   }
 
-  upload(File imageFile) async {
+  upload(File imageFile, String itemName, String itemCategory) async {
     // open a bytestream
     var stream =
         new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
@@ -454,6 +454,9 @@ class _UploaderState extends State<Uploader> {
 
     // add file to multipart
     request.files.add(multipartFile);
+
+    request.fields['Name'] = itemName;
+    request.fields['Category'] = itemCategory;
 
     // send
     var response = await request.send();
@@ -506,6 +509,9 @@ class _UploaderState extends State<Uploader> {
           ),
 
           /////////////// PICTURE DETAILS /////////////////////
+          Text(
+            "Item Name",
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: CupertinoTextField(
@@ -519,15 +525,18 @@ class _UploaderState extends State<Uploader> {
             ),
           ),
 
+          Text(
+            "Item Category",
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: CupertinoTextField(
-              restorationId: 'item_name',
-              placeholder: "name",
+              restorationId: 'item_category',
+              placeholder: "category",
               clearButtonMode: OverlayVisibilityMode.editing,
               autocorrect: false,
               onChanged: (value) {
-                name = value;
+                category = value;
               },
             ),
           ),
@@ -537,7 +546,7 @@ class _UploaderState extends State<Uploader> {
           ),
 
           TextButton.icon(
-              onPressed: () => upload(_image),
+              onPressed: () => upload(_image, name, category),
               icon: Icon(Icons.upload_rounded),
               label: Text("Upload now")),
           isloaded

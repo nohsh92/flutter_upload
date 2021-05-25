@@ -115,7 +115,9 @@ app.post('/upload', upload.single('myFile'), async(req, res, next) => {
     return next("hey error")    
   }                  
   const imagepost= new model({        
-    image: file.path      
+    image: file.path,
+    name: req.name,
+    category: req.category,
   })
 
   // const uploadingFile = req.body.image
@@ -123,6 +125,12 @@ app.post('/upload', upload.single('myFile'), async(req, res, next) => {
   console.log(uploadingFile)
   let imageFileExists = await model.findOne({image: uploadingFile});
   console.log(imageFileExists)
+
+  // const itemName = imagepost.name;
+  // const itemCategory = imagepost.category;
+
+
+  // Writing all the data to a DB
   if(imageFileExists) {
     console.log("This file already exists")
   }
