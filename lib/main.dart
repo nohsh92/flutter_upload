@@ -447,6 +447,8 @@ class _UploaderState extends State<Uploader> {
     var uri = Uri.parse("http://10.0.2.2:5000/upload");
     // create multipart request
     var request = new http.MultipartRequest("POST", uri);
+    request.fields['name'] = itemName.toString();
+    request.fields['category'] = itemCategory.toString();
 
     // multipart that takes file
     var multipartFile = new http.MultipartFile('myFile', stream, length,
@@ -455,12 +457,9 @@ class _UploaderState extends State<Uploader> {
     // add file to multipart
     request.files.add(multipartFile);
 
-    request.fields['Name'] = itemName;
-    request.fields['Category'] = itemCategory;
-
     // send
     var response = await request.send();
-    // print(response.statusCode);
+    print(response);
 
     // listen for response
     response.stream.transform(utf8.decoder).listen((value) {
