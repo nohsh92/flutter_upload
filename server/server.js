@@ -116,18 +116,14 @@ app.post('/upload', upload.single('myFile'), async(req, res, next) => {
   }                  
   const imagepost= new model({        
     image: file.path,
-    name: req.name,
-    category: req.category,
+    name: req.body.name,
+    category: req.body.category,
   })
-
-  console.log(req.name);
-  console.log(req.category);
 
   // const uploadingFile = req.body.image
   const uploadingFile = imagepost.image
   console.log(uploadingFile)
   let imageFileExists = await model.findOne({image: uploadingFile});
-  console.log(imageFileExists)
 
   const itemName = imagepost.name;
   console.log('Item Name is ' + itemName);
