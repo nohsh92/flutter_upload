@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:loginpage/main.dart';
 import 'package:loginpage/widgets/bottom_nav_widget.dart';
 
-class LandingScreen extends StatelessWidget {
-  static const String id = "LandingScreen";
-  List<int> top = <int>[];
-  List<int> bottom = <int>[0];
-
-  @override
+class ItemScreen extends StatelessWidget {
+  static const String id = "ItemScreen";
   List _buildList(int count) {
-    List<Widget> listItems = [];
+    List<Widget> listItems = List();
     for (int i = 0; i < count; i++) {
       listItems.add(
         Padding(
@@ -19,7 +16,7 @@ class LandingScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  'Category ${i.toString()}',
+                  'Item ${i.toString()}',
                   style: TextStyle(
                     fontSize: 30,
                     color: Colors.blue.shade200,
@@ -38,9 +35,15 @@ class LandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Categories'),
-      ),
+          centerTitle: true,
+          title: const Text('Items'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.add_a_photo),
+              tooltip: 'Add Photo',
+              onPressed: () => Navigator.pushNamed(context, Uploader.id),
+            )
+          ]),
       body: CustomScrollView(
         slivers: [
           // Have to find a way to populate the list from DB

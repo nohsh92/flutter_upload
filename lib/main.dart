@@ -6,6 +6,10 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:loginpage/screens/home/landing_screen.dart';
+import 'package:loginpage/screens/item/item_details_screen.dart';
+import 'package:loginpage/screens/item/item_screen.dart';
+import 'package:loginpage/widgets/bottom_nav_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:image_cropper/image_cropper.dart';
@@ -13,7 +17,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:path/path.dart' as path;
 
-import 'globals.dart' as globals;
+import 'globals.dart';
 
 void main() {
   runApp(MyApp());
@@ -186,7 +190,7 @@ class LoginSection extends StatelessWidget {
                     String token = prefs.getString('token');
                     if (token != null) {
                       Navigator.pushNamed(context, LandingScreen.id);
-                      globals.selectedPageIndex = 0;
+                      selectedPageIndex = 0;
                     }
                   },
                   icon: Icon(Icons.save),
@@ -217,108 +221,6 @@ login(email, password) async {
   await prefs.setString('token', parse["token"]);
 }
 
-class LandingScreen extends StatelessWidget {
-  static const String id = "LandingScreen";
-  List<int> top = <int>[];
-  List<int> bottom = <int>[0];
-
-  @override
-  List _buildList(int count) {
-    List<Widget> listItems = List();
-    for (int i = 0; i < count; i++) {
-      listItems.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: Container(
-            child: Card(
-              color: Colors.grey.shade800,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Text(
-                  'Category ${i.toString()}',
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: Colors.blue.shade200,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-    return listItems;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Categories'),
-      ),
-      body: CustomScrollView(
-        slivers: [
-          // Have to find a way to populate the list from DB
-          SliverList(
-            delegate: SliverChildListDelegate(_buildList(10)),
-          ),
-        ],
-      ),
-      bottomNavigationBar: _BottomNav(),
-    );
-  }
-}
-
-/// This is the stateful widget that the main application instantiates.
-class _BottomNav extends StatefulWidget {
-  const _BottomNav({Key key}) : super(key: key);
-
-  @override
-  __BottomNavState createState() => __BottomNavState();
-}
-
-/// This is the private State class that goes with _BottomNav.
-class __BottomNavState extends State<_BottomNav> {
-  void _onItemTapped(int index) {
-    setState(() {
-      globals.selectedPageIndex = index;
-      if (index == 0) {
-        Navigator.pushNamed(context, LandingScreen.id);
-      }
-      if (index == 1) {
-        Navigator.pushNamed(context, ItemScreen.id);
-      }
-      if (index == 2) {
-        Navigator.pushNamed(context, LogoutScreen.id);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.category),
-          label: 'Categories',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.list),
-          label: 'Items',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.logout),
-          label: 'Logout',
-        ),
-      ],
-      currentIndex: globals.selectedPageIndex,
-      selectedItemColor: Colors.blue[800],
-      onTap: _onItemTapped,
-    );
-  }
-}
-
 class LogoutScreen extends StatelessWidget {
   static const String id = "LogoutScreen";
   @override
@@ -338,7 +240,7 @@ class LogoutScreen extends StatelessWidget {
               label: Text("Logout"))
         ],
       ),
-      bottomNavigationBar: _BottomNav(),
+      bottomNavigationBar: BottomNavWidget(),
     );
   }
 }
@@ -401,7 +303,7 @@ class _ImageCaptureState extends State<ImageCapture> {
             ),
             Uploader(file: _imageFile)
           ]),
-      bottomNavigationBar: _BottomNav(),
+      bottomNavigationBar: BottomNavWidget(),
     );
   }
 }
@@ -424,6 +326,14 @@ class _UploaderState extends State<Uploader> {
 
   File _image;
   final picker = ImagePicker();
+
+  // #region howtouse_initState
+  // @override
+  // initState() {
+  //   fetch();
+  //   super.initState();
+  // }
+  // #endregion howtouse_initState
 
   Future<void> getImage() async {
     final pickedFile = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -481,174 +391,98 @@ class _UploaderState extends State<Uploader> {
 
   bool isloaded = false;
   var result;
-  fetch() async {
-    var response = await http.get(Uri.parse("http://10.0.2.2:5000/image"));
-    result = jsonDecode(response.body);
-    print(result[0]['image']);
-    setState(() {
-      isloaded = true;
-    });
-  }
+
+  // #region retreivingImagesFromServer
+  // fetch() async {
+  //   var response =
+  //       await http.get(Uri.parse("localhost:5000/image"));
+  //   result = jsonDecode(response.body);
+  //   print(result[0]['image']);
+  //   setState(() {
+  //     isloaded = true;
+  //   });
+  // }
+  // #endregion retreivingImagesFromServer
 
   @override
   Widget build(BuildContext context) {
-    fetch();
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Row(crossAxisAlignment: CrossAxisAlignment.center),
-
-          // Text and inputbox for image
-          Text(
-            "Select an image",
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          TextButton.icon(
-              onPressed: () async => await getImage(),
-              icon: Icon(Icons.upload_file),
-              label: Text("Browse")),
-          SizedBox(
-            height: 20,
-          ),
-
-          /////////////// PICTURE DETAILS /////////////////////
-          Text(
-            "Item Name",
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: CupertinoTextField(
-              restorationId: 'item_name',
-              placeholder: "name",
-              clearButtonMode: OverlayVisibilityMode.editing,
-              autocorrect: false,
-              onChanged: (value) {
-                name = value;
-              },
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
             ),
-          ),
+            Row(crossAxisAlignment: CrossAxisAlignment.center),
 
-          Text(
-            "Item Category",
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: CupertinoTextField(
-              restorationId: 'item_category',
-              placeholder: "category",
-              clearButtonMode: OverlayVisibilityMode.editing,
-              autocorrect: false,
-              onChanged: (value) {
-                category = value;
-              },
+            // Text and inputbox for image
+            Text(
+              "Select an image",
             ),
-          ),
+            SizedBox(
+              height: 20,
+            ),
+            _image != null
+                //? Image.network('http://10.0.2.2:5000/${result[0]['image']}')
+                ? Image.file(_image)
+                : CircularProgressIndicator(),
+            SizedBox(
+              height: 20,
+            ),
 
-          SizedBox(
-            height: 20,
-          ),
+            TextButton.icon(
+                onPressed: () async => await getImage(),
+                icon: Icon(Icons.upload_file),
+                label: Text("Browse")),
+            SizedBox(
+              height: 20,
+            ),
 
-          TextButton.icon(
-              onPressed: () => upload(_image, name, category),
-              icon: Icon(Icons.upload_rounded),
-              label: Text("Upload now")),
-          isloaded
-              ? Image.network('http://10.0.2.2:5000/${result[0]['image']}')
-              : CircularProgressIndicator(),
-        ],
-      ),
-    );
-  }
-}
-
-class ItemScreen extends StatelessWidget {
-  static const String id = "ItemScreen";
-  List _buildList(int count) {
-    List<Widget> listItems = List();
-    for (int i = 0; i < count; i++) {
-      listItems.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: Container(
-            child: Card(
-              color: Colors.grey.shade800,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Text(
-                  'Item ${i.toString()}',
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: Colors.blue.shade200,
-                  ),
-                ),
+            /////////////// PICTURE DETAILS /////////////////////
+            Text(
+              "Item Name",
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: CupertinoTextField(
+                restorationId: 'item_name',
+                placeholder: "name",
+                clearButtonMode: OverlayVisibilityMode.editing,
+                autocorrect: false,
+                onChanged: (value) {
+                  name = value;
+                },
               ),
             ),
-          ),
+
+            Text(
+              "Item Category",
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: CupertinoTextField(
+                restorationId: 'item_category',
+                placeholder: "category",
+                clearButtonMode: OverlayVisibilityMode.editing,
+                autocorrect: false,
+                onChanged: (value) {
+                  category = value;
+                },
+              ),
+            ),
+
+            SizedBox(
+              height: 20,
+            ),
+
+            TextButton.icon(
+                onPressed: () => upload(_image, name, category),
+                icon: Icon(Icons.upload_rounded),
+                label: Text("Upload now")),
+          ],
         ),
-      );
-    }
-    return listItems;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Items'),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.add_a_photo),
-              tooltip: 'Add Photo',
-              onPressed: () => Navigator.pushNamed(context, Uploader.id),
-            )
-          ]),
-      body: CustomScrollView(
-        slivers: [
-          // Have to find a way to populate the list from DB
-          SliverList(
-            delegate: SliverChildListDelegate(_buildList(10)),
-          ),
-        ],
       ),
-      bottomNavigationBar: _BottomNav(),
-    );
-  }
-}
-
-class ItemDetailScreen extends StatelessWidget {
-  static const String id = "ItemDetailScreen";
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Items'),
-      ),
-      body: CustomScrollView(
-        slivers: [
-          // Going to use on the item page later
-          SliverAppBar(
-            expandedHeight: 300.0,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset(
-                'images/bg1.jpg',
-                fit: BoxFit.cover,
-              ),
-              stretchModes: [
-                StretchMode.zoomBackground,
-              ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: _BottomNav(),
     );
   }
 }
