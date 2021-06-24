@@ -436,7 +436,12 @@ class _UploaderState extends State<Uploader> {
     });
   }
 
-  upload(File imageFile, String itemName, String itemCategory) async {
+  upload(
+    File imageFile,
+    String itemName,
+    String itemCategory,
+  ) async {
+    //String itemKeepOrDrop, String itemLocation, String itemDetails) async {
     // open a bytestream
     var stream =
         new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
@@ -449,6 +454,11 @@ class _UploaderState extends State<Uploader> {
     var request = new http.MultipartRequest("POST", uri);
     request.fields['name'] = itemName.toString();
     request.fields['category'] = itemCategory.toString();
+    // request.fields['keepdrop'] = itemKeepOrDrop.toString();
+    // request.fields['location'] = itemLocation.toString();
+    // request.fields['details'] = itemDetails.toString();
+
+    /////// LATERRRRRRRRR ^^^^^^ /////////
 
     // multipart that takes file
     var multipartFile = new http.MultipartFile('myFile', stream, length,
