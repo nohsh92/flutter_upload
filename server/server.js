@@ -79,7 +79,7 @@ app.post('/signup', async (req, res) => {
     await user.save();
     var token = jwt.sign({ id: user.id }, "password");
     res.json({token:token});
-  })
+})
 
   // login route api
 app.post('/login', async (req, res) => {
@@ -102,8 +102,6 @@ app.post('/login', async (req, res) => {
   return res.json({token:token});
 
 })
-
-
 
 // upload route api
 var upload = multer({storage: storage})
