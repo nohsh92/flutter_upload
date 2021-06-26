@@ -18,9 +18,12 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:path/path.dart' as path;
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'globals.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
