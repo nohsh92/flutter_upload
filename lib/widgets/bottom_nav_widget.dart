@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:loginpage/main.dart';
 import 'package:loginpage/screens/home/landing_screen.dart';
 import 'package:loginpage/screens/item/item_screen.dart';
+import 'package:loginpage/screens/logout/logout_screen.dart';
 import '../globals.dart';
 
 /// This is the stateful widget that the main application instantiates.
