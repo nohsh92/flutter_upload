@@ -83,6 +83,8 @@ class LoginScreen extends StatelessWidget {
                     if (token != null) {
                       Navigator.pushNamed(context, LandingScreen.id);
                       selectedPageIndex = 0;
+                    } else {
+                      print("something went wrong with token");
                     }
                   },
                   icon: Icon(Icons.save),
@@ -97,7 +99,7 @@ class LoginScreen extends StatelessWidget {
 
 login(email, password) async {
   final http.Response response = await http.post(
-    Uri.http("10.0.2.2:5000", "/login"),
+    Uri.http(dotenv.env['NODESERVER'], "/login"),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -208,7 +210,7 @@ class SignupScreen extends StatelessWidget {
 
 signup(email, password) async {
   final http.Response response = await http.post(
-    Uri.http("10.0.2.2:5000", "/signup"),
+    Uri.http(dotenv.env['NODESERVER'], "/signup"),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -339,7 +341,7 @@ class _UploaderState extends State<Uploader> {
     var length = await imageFile.length();
 
     // string to uri
-    var uri = Uri.parse("http://10.0.2.2:5000/upload");
+    var uri = Uri.http(dotenv.env['NODESERVER'], "/upload");
     // create multipart request
     var request = new http.MultipartRequest("POST", uri);
     request.fields['name'] = itemName.toString();
