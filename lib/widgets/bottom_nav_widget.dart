@@ -4,6 +4,8 @@ import 'package:loginpage/screens/item/item_screen.dart';
 import 'package:loginpage/screens/logout/logout_screen.dart';
 import '../globals.dart';
 
+/// TODO : Check using Stacks to position new widgets using Offset widget
+
 /// This is the stateful widget that the main application instantiates.
 class BottomNavWidget extends StatefulWidget {
   const BottomNavWidget({Key key}) : super(key: key);

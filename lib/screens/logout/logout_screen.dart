@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:loginpage/screens/login/login_screen.dart';
 import 'package:loginpage/widgets/bottom_nav_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../main.dart';
 
 class LogoutScreen extends StatelessWidget {
   static const String id = "LogoutScreen";
