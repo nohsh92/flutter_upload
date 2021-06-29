@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:loginpage/screens/home/home_screen.dart';
 import 'package:loginpage/screens/home/landing_screen.dart';
 import 'package:loginpage/screens/item/item_details_screen.dart';
 import 'package:loginpage/screens/item/item_screen.dart';
@@ -43,7 +44,30 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: SignupScreen(),
+        home: FutureBuilder(
+            future: jwtOrEmpty,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return CircularProgressIndicator();
+              if (snapshot.data != "") {
+                var str = snapshot.data;
+                var jwt = str.split(".");
+
+                if (jwt.length != 3) {
+                  return LoginScreen();
+                } else {
+                  var payload = json.decode(
+                      ascii.decode(base64.decode(base64.normalize(jwt[1]))));
+                  if (DateTime.fromMillisecondsSinceEpoch(payload["exp"] * 1000)
+                      .isAfter(DateTime.now())) {
+                    return HomePage(str, payload);
+                  } else {
+                    return LoginScreen();
+                  }
+                }
+              } else {
+                return LoginScreen();
+              }
+            }),
         routes: {
           LandingScreen.id: (context) => LandingScreen(),
           LoginScreen.id: (context) => LoginScreen(),

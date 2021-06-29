@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:loginpage/screens/home/home_screen.dart';
 import 'package:loginpage/screens/home/landing_screen.dart';
 
 import '../../common_functions.dart';
@@ -47,16 +48,24 @@ class LoginScreen extends StatelessWidget {
                   onPressed: () async {
                     var username = _usernameController.text;
                     var password = _passwordController.text;
-                    var jwt = await attemptLogIn(username, password);
-                    if (jwt != null) {
-                      storage.write(key: "jwt", value: jwt);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LandingScreen()));
+                    displayDialog(context, "Info:",
+                        "Email: $username \n Password: $password");
+                    if (username == null || password == null) {
+                      displayDialog(context, 'Null not Permitted',
+                          'Null is not permitted for neither email nor password');
                     } else {
-                      displayDialog(context, "An Error Occurred",
-                          "No account was found matching that username and password");
+                      var jwt = await attemptLogIn(username, password);
+                      if (jwt != null) {
+                        storage.write(key: "jwt", value: jwt);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    HomePage.fromBase64(jwt)));
+                      } else {
+                        displayDialog(context, "An Error Occurred",
+                            "No account was found matching that username and password");
+                      }
                     }
                   },
                   child: Text("Log In")),
