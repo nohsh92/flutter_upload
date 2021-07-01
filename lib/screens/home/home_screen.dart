@@ -15,7 +15,6 @@ class HomePage extends StatelessWidget {
   final String jwt;
   final Map<String, dynamic> payload;
 
-  @override
   List _buildList(int count) {
     List<Widget> listItems = [];
     for (int i = 0; i < count; i++) {
@@ -25,31 +24,16 @@ class HomePage extends StatelessWidget {
           child: Container(
             child: Card(
               color: Colors.grey.shade800,
-              child: FutureBuilder(
-                  future: http.read(
-                      (Uri.http(dotenv.env['NODESERVER'], "/data")),
-                      headers: {"Authorization": jwt}),
-                  builder: (context, snapshot) => snapshot.hasData
-                      ? Column(
-                          children: <Widget>[
-                            Text("${payload['email']}, here's the data:"),
-                            Text(snapshot.data,
-                                style: Theme.of(context).textTheme.headline4)
-                          ],
-                        )
-                      : snapshot.hasError
-                          ? Text("An error occurred")
-                          : CircularProgressIndicator()),
-              // child: Padding(
-              //   padding: const EdgeInsets.all(15.0),
-              //   child: Text(
-              //     'Category ${i.toString()}',
-              //     style: TextStyle(
-              //       fontSize: 30,
-              //       color: Colors.blue.shade200,
-              //     ),
-              //   ),
-              // ),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                  'Category ${i.toString()}',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.blue.shade200,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -63,10 +47,26 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Categories'),
+        title: const Text('Home Screen'),
       ),
       body: CustomScrollView(
         slivers: [
+          SliverToBoxAdapter(
+            child: FutureBuilder(
+                future: http.read((Uri.http(dotenv.env['NODESERVER'], "/data")),
+                    headers: {"Authorization": jwt}),
+                builder: (context, snapshot) => snapshot.hasData
+                    ? Column(
+                        children: <Widget>[
+                          Text("${payload['email']}, here's the data:"),
+                          Text(snapshot.data,
+                              style: Theme.of(context).textTheme.headline4)
+                        ],
+                      )
+                    : snapshot.hasError
+                        ? Text("An error occurred")
+                        : CircularProgressIndicator()),
+          ),
           // Have to find a way to populate the list from DB
           SliverList(
             delegate: SliverChildListDelegate(_buildList(10)),

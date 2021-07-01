@@ -39,7 +39,7 @@ class LandingScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Categories'),
+        title: const Text('Landing Screen'),
       ),
       body: CustomScrollView(
         slivers: [
