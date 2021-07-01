@@ -33,6 +33,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   Future<String> get jwtOrEmpty async {
     var jwt = await storage.read(key: "jwt");
+    // storage.deleteAll();             // used for deleting keys(debugging)
+    // storage.delete(key: "jwt");
     if (jwt == null) return "";
     return jwt;
   }
@@ -56,7 +58,8 @@ class MyApp extends StatelessWidget {
                   return LoginScreen();
                 } else {
                   var payload = json.decode(
-                      ascii.decode(base64.decode(base64.normalize(jwt[1]))));
+                      utf8.decode(base64.decode(base64.normalize(jwt[1]))));
+
                   if (DateTime.fromMillisecondsSinceEpoch(payload["exp"] * 1000)
                       .isAfter(DateTime.now())) {
                     return HomePage(str, payload);
