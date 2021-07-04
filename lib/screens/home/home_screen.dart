@@ -76,25 +76,4 @@ class HomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavWidget(),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) => Scaffold(
-  //       appBar: AppBar(title: Text("Secret Data Screen")),
-  //       body: Center(
-  //         child: FutureBuilder(
-  //             future: http.read((Uri.http(dotenv.env['NODESERVER'], "/data")),
-  //                 headers: {"Authorization": jwt}),
-  //             builder: (context, snapshot) => snapshot.hasData
-  //                 ? Column(
-  //                     children: <Widget>[
-  //                       Text("${payload['email']}, here's the data:"),
-  //                       Text(snapshot.data,
-  //                           style: Theme.of(context).textTheme.headline4)
-  //                     ],
-  //                   )
-  //                 : snapshot.hasError
-  //                     ? Text("An error occurred")
-  //                     : CircularProgressIndicator()),
-  //       ),
-  //     );
 }

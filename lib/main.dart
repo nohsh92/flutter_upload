@@ -41,26 +41,32 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: FutureBuilder(
-            future: jwtOrEmpty,
+            future: checkForJWT,
             builder: (context, snapshot) {
               if (!snapshot.hasData) return CircularProgressIndicator();
               if (snapshot.data != "") {
-                var str = snapshot.data;
-                var jwt = str.split(".");
-
-                if (jwt.length != 3) {
-                  return LoginScreen();
+                var tokenValid = tokenIsValid(snapshot.data);
+                if (tokenValid != false) {
+                  return HomePage(snapshot.data, tokenValid);
                 } else {
-                  var payload = json.decode(
-                      utf8.decode(base64.decode(base64.normalize(jwt[1]))));
-
-                  if (DateTime.fromMillisecondsSinceEpoch(payload["exp"] * 1000)
-                      .isAfter(DateTime.now())) {
-                    return HomePage(str, payload);
-                  } else {
-                    return LoginScreen();
-                  }
+                  return LoginScreen();
                 }
+                // var str = snapshot.data;
+                // var jwt = str.split(".");
+
+                // if (jwt.length != 3) {
+                //   return LoginScreen();
+                // } else {
+                //   var payload = json.decode(
+                //       utf8.decode(base64.decode(base64.normalize(jwt[1]))));
+
+                //   if (DateTime.fromMillisecondsSinceEpoch(payload["exp"] * 1000)
+                //       .isAfter(DateTime.now())) {
+                //     return HomePage(str, payload);
+                //   } else {
+                //     return LoginScreen();
+                //   }
+                // }
               } else {
                 return LoginScreen();
               }
