@@ -2,10 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:loginpage/main.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:loginpage/screens/home/home_screen.dart';
-import 'package:loginpage/screens/login/login_screen.dart';
 
 void displayDialog(context, title, text) => showDialog(
       context: context,
@@ -20,7 +16,7 @@ Future<String> get checkForJWT async {
   return jwt;
 }
 
-dynamic tokenIsValid(dynamic jwtStr) {
+dynamic tokenIsValid(String jwtStr) {
   var jwt = jwtStr.split(".");
   if (jwt.length != 3) {
     return false;
