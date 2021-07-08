@@ -6,7 +6,6 @@ class LandingScreen extends StatelessWidget {
   List<int> top = <int>[];
   List<int> bottom = <int>[0];
 
-  @override
   List _buildList(int count) {
     List<Widget> listItems = [];
     for (int i = 0; i < count; i++) {
