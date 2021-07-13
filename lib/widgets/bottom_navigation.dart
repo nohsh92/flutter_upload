@@ -34,14 +34,4 @@ class BottomNavigation extends StatelessWidget {
   Color _colorTabMatching(TabItem item) {
     return currentTab == item ? activeTabColor[item] : Colors.grey;
   }
-
-  void pushBottomNav() {
-    Navigator.of(context).push(MaterialPageRoute(
-      // we'll look at ColorDetailPage later
-      builder: (context) => ColorDetailPage(
-        color: activeTabColor[TabItem.Items],
-        title: tabName[TabItem.Items],
-      ),
-    ));
-  }
 }
