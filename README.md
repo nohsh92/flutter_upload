@@ -9,8 +9,8 @@ Progress Overview
 [O] 5. Set up login infrastructure  
 [O] 6. Use CustomScrollView to make lists  
 [O] 7. Create API for mongoDB <-> server interface  
-[X] 8. Create API for app <-> server interface  
-       8a. Find method of retrieving list of images (may have to reorganize DB)  
+[O] 8. Create API for app <-> server interface  
+[X] 8a. Find method of retrieving list of images (may have to reorganize DB)  
 [O] 9. Find method for uploading pictures  
 [X] 10. Finalize layout and pages  
         10a. Reorganize pages (add new image to bottomNavBar)  
