@@ -12,9 +12,9 @@ Progress Overview
 [O] 8. Create API for app <-> server interface  
 [X] 8a. Find method of retrieving list of images (may have to reorganize DB)  
 [O] 9. Find method for uploading pictures  
-[X] 10. Finalize layout and pages  
+[O] 10. Finalize layout and pages  
         10a. Reorganize pages (add new image to bottomNavBar)  
-[X] 11. Debugging  
+[->] 11. Debugging  
         11a. Organize a new DB structure  
 
  
